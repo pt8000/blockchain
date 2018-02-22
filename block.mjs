@@ -14,7 +14,8 @@ export class Block {
     }
 
     mineBlock(difficulty) {
-        while(this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
+        // while(this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
+        while(this.hash.substring(0, difficulty) !== "0".repeat(difficulty)) { //ES6 version, faster than Array.join...
             this.nonce++;
             this.hash = this.calculateHash();
         }

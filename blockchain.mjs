@@ -1,6 +1,6 @@
 import { Block } from './block';
 import { Transaction } from './transaction.mjs';
-import { Transaction } from './transaction.mjs';
+
 
 export class Blockchain {
     constructor() {
@@ -13,12 +13,6 @@ export class Blockchain {
     createGenesisBlock() {
         return new Block("01-01-2018", "Genesis block", "0");
     }
-
-    // addBlock(newBlock) {
-    //     newBlock.previousHash = this.getLatestBlock().hash;
-    //     newBlock.mineBlock(this.difficulty);
-    //     this.chain.push(newBlock);
-    // }
 
     minePendingTransactions(minerAddress) {
         let block = new Block(Date.now(), this.pendingTransactions); //in cryptocurrencies, normally miner don't get all pending transactions because there is too many of them
@@ -39,6 +33,18 @@ export class Blockchain {
 
     getBalance(address) {
         let balance = 0;
+
+        for (const block of this.chain) {
+            for (const transacion of block.transactions) {
+                if (transacion.fromAddress === address) {
+                    balance -= transacion.amount;
+                }
+                if (transacion.toAddress === address) {
+                    balance += transacion.amount;
+                }
+            }
+        }
+        return balance;
     }
 
     getLatestBlock() {
@@ -46,7 +52,7 @@ export class Blockchain {
     }
 
     isChainValid() {
-        for (let i = 1; i < this.chain.length; i++){
+        for (let i = 1; i < this.chain.length; i++) {
             const currentBlock = this.chain[i];
             const previousBlock = this.chain[i - 1];
 

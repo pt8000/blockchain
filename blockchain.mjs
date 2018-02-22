@@ -1,19 +1,44 @@
 import { Block } from './block';
+import { Transaction } from './transaction.mjs';
+import { Transaction } from './transaction.mjs';
 
 export class Blockchain {
     constructor() {
         this.chain = [this.createGenesisBlock()];
         this.difficulty = 3;
+        this.pendingTransactions = [];
+        this.miningReward = 0.2;
     }
 
     createGenesisBlock() {
-        return new Block(0, "01-01-2018", "Genesis block", "0");
+        return new Block("01-01-2018", "Genesis block", "0");
     }
 
-    addBlock(newBlock) {
-        newBlock.previousHash = this.getLatestBlock().hash;
-        newBlock.mineBlock(this.difficulty);
-        this.chain.push(newBlock);
+    // addBlock(newBlock) {
+    //     newBlock.previousHash = this.getLatestBlock().hash;
+    //     newBlock.mineBlock(this.difficulty);
+    //     this.chain.push(newBlock);
+    // }
+
+    minePendingTransactions(minerAddress) {
+        let block = new Block(Date.now(), this.pendingTransactions); //in cryptocurrencies, normally miner don't get all pending transactions because there is too many of them
+        block.mineBlock(this.difficulty);
+        console.log("Block successfuly mined!");
+
+        this.chain.push(block);
+
+        //clear pending transactions and add one new transaction with reward for miner who did it :)
+        this.pendingTransactions = [
+            new Transaction(null, minerAddress, this.miningReward)
+        ];
+    }
+
+    createTransaction(transaction) {
+        this.pendingTransactions.push(transaction);
+    }
+
+    getBalance(address) {
+        let balance = 0;
     }
 
     getLatestBlock() {
